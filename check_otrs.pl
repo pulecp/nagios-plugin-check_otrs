@@ -1,7 +1,10 @@
 #!/usr/bin/perl -w
 
-#Script zur Anzeige neuer Tickets, noch nicht bearbeiteter Tickets in OTRS
-#Copyright (c) 2008 by Michael Glaess
+# Original script is from: http://exchange.nagios.org/directory/Plugins/Helpdesk-and-Ticketing/check_otrs-2Epl/details
+#####
+#####Script zur Anzeige neuer Tickets, noch nicht bearbeiteter Tickets in OTRS
+#####Copyright (c) 2008 by Michael Glaess
+#####
 
 
 use strict;
@@ -98,7 +101,7 @@ sub print_help () {
     printf "   -H (--host)   IP or FQDN of mysql host\n";
     printf "   -u (--user)   User of mysql database\n";
     printf "   -p (--pass)   Password to mysql database\n";
-    printf "   -n (--dbname) Database name\n";
+    printf "   -n (--dbname) Database name\n\n";
     printf "   -v            Version\n";
     printf "   -h (--help)   Help\n";
     printf "\n";
@@ -109,6 +112,7 @@ sub print_usage () {
         print "Usage: $0 \n";
         print "       $0 -w 2 -c 3\n";
         print "       $0 -t 1 -q 3 -w 2 -c 4\n";
+        print "       $0 -t 1 -q 3 -w 2 -c 4 -H DBhost -u DBuser -p DBpass -n DBname\n";
 }
 ###############################################
 $ENV{'BASH_ENV'}=''; 
@@ -134,9 +138,12 @@ if ( !$opt_w){$opt_w=1;} #Warning at just one ticket
 if ( !$opt_c){$opt_c=2;} #Set Critical even on two tickets
 if ( !$opt_q){$opt_q=3;} #Default QUEUE -> Needs to Change!!
 
-if (!$DBhost && !$DBuser && !$DBpass %% !$DBname){
+if ( !$DBhost and !$DBuser and !$DBpass and !$DBname){
         print_help();
-        exit $ERRORS{'One of parametr about database is not set.'}; 
+        print "\n###############################################";
+        print "\nParameters about database are required!!!\n";
+        print "###############################################\n";
+        exit $ERRORS{UNKNOWN}; 
 }
 
 #printf "OPT_t = $opt_t,OPT_w= $opt_w, OPT_c = $opt_c, OPT_q = $opt_q\n";
