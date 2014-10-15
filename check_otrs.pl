@@ -28,7 +28,7 @@ my $opt_c;
 my $opt_t;      #0=Neue Tickets;1=offene Tickets
 my $opt_q;      #3=Queue Servicehotline
 my $status  ="0";
-my $anzahl;
+my $count;
 my $sql;
 my $result;
 my $message;
@@ -52,13 +52,13 @@ my $dbhm2=DBI->connect("dbi:mysql:$DBname:$DBhost","$DBuser","$DBpass",
 
 if ( $opt_t == "0" ) {
     # New Tickets
-    #$sql = "Select count(*) as Anzahl from ticket where queue_id='".$opt_q."' and ticket_state_id='1'";    
-    $sql = "Select count(*) as Anzahl from ticket where ticket_state_id='1'";    
+    #$sql = "Select count(*) as Count from ticket where queue_id='".$opt_q."' and ticket_state_id='1'";    
+    $sql = "Select count(*) as Count from ticket where ticket_state_id='1'";    
     
 } elsif ( $opt_t == "1" ) {
      # Open Tickets
-     #$sql = "Select count(*) as Anzahl from ticket where queue_id='".$opt_q."' and ticket_state_id='4'";    
-     $sql = "Select count(*) as Anzahl from ticket where ticket_state_id='4'";    
+     #$sql = "Select count(*) as Count from ticket where queue_id='".$opt_q."' and ticket_state_id='4'";    
+     $sql = "Select count(*) as Count from ticket where ticket_state_id='4'";    
 }
 
 my $sqlp=$dbhm->prepare($sql);
@@ -68,18 +68,18 @@ if (!$sqlp->execute()){
     }    
 $result=$sqlp->fetchrow_hashref();
 #Set Optimize Text for Nagios
-    $anzahl=$result->{Anzahl};
-    $message = "Anzahl ";               #Count
+    $count=$result->{Count};
+    $message = "Count ";               #Count
     if ( $opt_t == "0" )
-        {$message .= "neuer ";}         #New
+        {$message .= "new ";}          #New
     if ( $opt_t == "1" )
-        {$message .="offener ";}        #Open
+        {$message .="open ";}          #Open
 
-    $message = $message."Tickets: $result->{Anzahl}";
+    $message = $message."Tickets: $result->{Count}";
 
-if    ($anzahl >= $opt_c) 
+if    ($count >= $opt_c) 
         {$status = $ERRORS{'CRITICAL'};}
-elsif ($anzahl >= $opt_w) 
+elsif ($count >= $opt_w) 
         {$status = $ERRORS{'WARNING'};}
 else { $status = $ERRORS{'OK'};}
 
